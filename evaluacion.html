@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluacion BPM - CardioMonitor Pro</title>
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    /* Estilos especificos de evaluacion */
+    .evaluation-section {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .form-section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .measurement-panel {
+      margin-top: var(--spacing-2xl);
+      text-align: center;
+    }
+
+    .bpm-display-large {
+      font-size: 5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: var(--spacing-xl) 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .measurement-counter {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .measurement-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-xl);
+    }
+
+    .stat-box {
+      background: var(--bg-tertiary);
+      padding: var(--spacing-lg);
+      border-radius: var(--border-radius-sm);
+      text-align: center;
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .result-container {
+      margin-top: var(--spacing-2xl);
+    }
+
+    .result-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .result-header h2 {
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .result-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .metric-card {
+      background: var(--bg-tertiary);
+      padding: var(--spacing-lg);
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--primary);
+    }
+
+    .metric-card strong {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-card span {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .interpretation-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-lg);
+      line-height: 1.8;
+    }
+
+    .warning-banner {
+      background: #FEF3C7;
+      border: 1px solid var(--warning);
+      border-radius: var(--border-radius-sm);
+      padding: var(--spacing-md);
+      text-align: center;
+      color: #92400E;
+      font-weight: 500;
+    }
+
+    .error-message {
+      background: var(--danger);
+      color: white;
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius-sm);
+      text-align: center;
+    }
+
+    .pulse-animation {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+
+    @media (max-width: 768px) {
+      .bpm-display-large {
+        font-size: 3.5rem;
+      }
+
+      .measurement-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .result-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <svg class="brand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        CardioMonitor Pro
+      </a>
+      
+      <button class="nav-toggle" onclick="toggleMenu()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      <div class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">Inicio</a>
+        <a href="evaluacion.html" class="nav-link active">Iniciar Evaluacion</a>
+        <a href="admin.html" class="nav-link">Panel Admin</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="evaluation-section">
+      
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">Evaluacion Individual de BPM</h1>
+        <p class="page-subtitle">
+          Conecte el dispositivo ESP32 con sensor MAX30102 para medir su frecuencia cardiaca en tiempo real y comparar con patrones de referencia
+        </p>
+      </div>
+
+      <!-- Form Section -->
+      <div class="form-section">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Datos del Participante</h2>
+          </div>
+          <div class="card-body">
+            <form id="formEvaluacion">
+              
+              <div class="form-group">
+                <label class="form-label">Nombre Completo</label>
+                <input type="text" class="form-input" id="nombre" placeholder="Ej: Juan Perez" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Edad</label>
+                  <input type="number" class="form-input" id="edad" min="1" max="120" placeholder="25" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Sexo</label>
+                  <select class="form-select" id="sexo" required>
+                    <option value="">Seleccione</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Peso (kg)</label>
+                  <input type="number" class="form-input" id="peso" step="0.1" placeholder="70.5" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Altura (cm)</label>
+                  <input type="number" class="form-input" id="altura" placeholder="170" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Rutina Fisica</label>
+                <select class="form-select" id="rutina" required>
+                  <option value="">Seleccione</option>
+                  <option value="Sedentario">Sedentario</option>
+                  <option value="Activo">Activo</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Iniciar Medicion
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Measurement Panel -->
+      <div id="panelMedicion" class="measurement-panel hidden">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Medicion en Vivo</h2>
+          </div>
+          <div class="card-body">
+            
+            <div class="bpm-display-large pulse-animation" id="bpmActual">--</div>
+            <div class="measurement-counter" id="contadorMuestras">Lectura 0/24</div>
+
+            <div class="measurement-stats">
+              <div class="stat-box">
+                <span class="stat-label">Promedio</span>
+                <span class="stat-value" id="promedioBpm">--</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">Minimo</span>
+                <span class="stat-value" id="minBpm">--</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">Maximo</span>
+                <span class="stat-value" id="maxBpm">--</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Section -->
+      <div id="resultadoEvaluacion" class="result-container hidden"></div>
+
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('navMenu').classList.toggle('active');
+    }
+  </script>
+  <script src="js/evaluacion.js"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análisis de Muestras Cardíacas</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo">Cardiac Monitoring System</div>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="registro.html">Registro</a>
+    <a href="medicion.html">Medición BPM</a>
+    <a href="analisis.html">Análisis</a>
+    <a href="evaluacion.html">Evaluación</a>
+  </nav>
+</header>
+
+<main class="analysis-container">
+
+  <h1>Análisis de Muestras Cardíacas</h1>
+
+  <p class="analysis-description">
+    Panel estadístico basado en las mediciones BPM almacenadas en Azure Blob Storage.
+  </p>
+
+  <div id="loading" class="loading">
+    Cargando análisis desde Azure...
+  </div>
+
+  <div id="errorBox" class="error-box hidden"></div>
+
+  <section id="dashboard" class="hidden">
+
+    <div class="summary-grid">
+
+      <div class="summary-card">
+        <h3>Pacientes</h3>
+        <span id="totalPacientes">--</span>
+        <p>Participantes incluidos</p>
+      </div>
+
+      <div class="summary-card">
+        <h3>Muestras</h3>
+        <span id="totalMuestras">--</span>
+        <p>Lecturas BPM registradas</p>
+      </div>
+
+      <div class="summary-card">
+        <h3>Promedio BPM</h3>
+        <span id="promedioGeneral">--</span>
+        <p>Promedio general</p>
+      </div>
+
+      <div class="summary-card">
+        <h3>Rango BPM</h3>
+        <span id="rangoBpm">--</span>
+        <p>Mínimo y máximo</p>
+      </div>
+
+    </div>
+
+    <section class="analysis-section">
+      <h2>Resumen Ejecutivo</h2>
+      <div id="resumenEjecutivo" class="conclusion-box"></div>
+    </section>
+
+    <section class="analysis-section">
+      <h2>Clasificación de Lecturas</h2>
+
+      <div class="classification-grid">
+
+        <div class="classification-card">
+          <h3>Bradicardia</h3>
+          <span id="bradicardia">--</span>
+          <p>Menores a 60 BPM</p>
+        </div>
+
+        <div class="classification-card">
+          <h3>Rango esperado</h3>
+          <span id="normal">--</span>
+          <p>Entre 60 y 100 BPM</p>
+        </div>
+
+        <div class="classification-card">
+          <h3>Elevado</h3>
+          <span id="elevado">--</span>
+          <p>Mayores a 100 BPM</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="charts-grid">
+
+      <div class="chart-card">
+        <h2>Distribución de Frecuencia Cardíaca</h2>
+        <p id="textoDistribucion" class="chart-description"></p>
+        <canvas id="chartDistribucion"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>Comparación por Rutina Física</h2>
+        <p id="textoRutina" class="chart-description"></p>
+        <canvas id="chartRutina"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>Comparación por Sexo</h2>
+        <p id="textoSexo" class="chart-description"></p>
+        <canvas id="chartSexo"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>Comparación por Grupo de Edad</h2>
+        <p id="textoEdad" class="chart-description"></p>
+        <canvas id="chartEdad"></canvas>
+      </div>
+
+    </section>
+
+    <section class="analysis-section">
+      <h2>Detalle por Grupos</h2>
+
+      <h3>Sexo</h3>
+      <div id="sexoContainer" class="data-list"></div>
+
+      <h3>Rutina física</h3>
+      <div id="rutinaContainer" class="data-list"></div>
+
+      <h3>Grupo de edad</h3>
+      <div id="edadContainer" class="data-list"></div>
+    </section>
+
+    <section class="analysis-section">
+      <h2>Observaciones del Análisis</h2>
+      <div id="hallazgos" class="interpretation-box"></div>
+    </section>
+
+    <section class="analysis-section">
+      <h2>Interpretación Clínica Experimental</h2>
+      <div class="warning-box">
+        Con base en las muestras registradas, el sistema genera una interpretación estadística
+        del comportamiento cardíaco observado. Estos resultados tienen fines académicos y de
+        análisis experimental, por lo que no constituyen un diagnóstico médico.
+      </div>
+    </section>
+
+  </section>
+
+</main>
+
+<script src="js/analisis.js"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medición de BPM - CardioMonitor Pro</title>
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    .monitor-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .bpm-display {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .bpm-value {
+      font-size: 4rem;
+      font-weight: 800;
+      margin: 1rem 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .bpm-label {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+    
+    .status-waiting {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    .status-active {
+      background: #10B981;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+    
+    .instructions-card {
+      background: #FEF3C7;
+      border: 1px solid #F59E0B;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .instructions-card h3 {
+      color: #92400E;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .instructions-card ol {
+      margin-left: 1.5rem;
+      color: #78350F;
+    }
+    
+    .instructions-card li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+    
+    .session-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .info-item {
+      background: rgba(255,255,255,0.1);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    
+    .info-label {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+        </svg>
+        <span class="brand-text">CardioMonitor Pro</span>
+      </a>
+      <button class="nav-toggle" onclick="toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">Inicio</a>
+        <a href="evaluacion.html" class="nav-link">Iniciar Evaluacion</a>
+        <a href="admin.html" class="nav-link active">Panel Admin</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">Medición de Frecuencia Cardíaca</h1>
+      <p class="page-subtitle">
+        Monitoreo en tiempo real de BPM desde dispositivos IoT
+      </p>
+    </div>
+
+    <div class="monitor-container">
+      <!-- Instructions -->
+      <div class="instructions-card">
+        <h3>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4M12 8h.01"/>
+          </svg>
+          Instrucciones para la Medicion
+        </h3>
+        <ol>
+          <li>Seleccione el paciente de la lista desplegable</li>
+          <li>Click en "Iniciar Sesion de Medicion" para crear una nueva sesion</li>
+          <li>Conecte el dispositivo ESP32 con sensor MAX30102 al paciente</li>
+          <li>El sistema capturara 24 lecturas durante 1 minuto automaticamente</li>
+          <li>Click en "Finalizar Sesion" cuando complete la medicion</li>
+        </ol>
+      </div>
+
+      <!-- BPM Monitor Display -->
+      <div class="bpm-display">
+        <div class="bpm-label">Frecuencia Cardíaca Actual</div>
+        <div class="bpm-value" id="bpmValue">--</div>
+        <div style="font-size: 1.5rem; opacity: 0.9;">BPM</div>
+        <div class="status-badge" id="statusBadge">En espera</div>
+        
+        <div class="session-info">
+          <div class="info-item">
+            <div class="info-label">Sesión ID</div>
+            <div class="info-value" id="sesionId">--</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Paciente</div>
+            <div class="info-value" id="pacienteNombre">--</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Lecturas</div>
+            <div class="info-value" id="lecturaCount">0 / 24</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control Panel -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Panel de Control</h2>
+        </div>
+        <div class="card-body">
+          <form id="formSesion">
+            <div class="form-group">
+              <label class="form-label">Seleccionar Paciente *</label>
+              <select id="selectPaciente" class="form-select" required>
+                <option value="">Cargando pacientes...</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+              <button type="submit" class="btn btn-success" id="btnIniciar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polygon points="10 8 16 12 10 16 10 8"/>
+                </svg>
+                Iniciar Sesión de Medición
+              </button>
+              <button type="button" class="btn btn-secondary" id="btnFinalizar" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10"/>
+                  <rect x="9" y="9" width="6" height="6"/>
+                </svg>
+                Finalizar Sesión
+              </button>
+            </div>
+          </form>
+
+          <div id="mensaje" style="margin-top: 1.5rem;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/medicion.js"></script>
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('navMenu');
+      menu.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>

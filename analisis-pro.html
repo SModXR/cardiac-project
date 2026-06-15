@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análisis Cardíaco - Dashboard Profesional</title>
+  <link rel="stylesheet" href="css/analisis-pro.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- Navigation Header -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M4.5 12.75l6 6 9-13.5"/>
+        </svg>
+        <span class="brand-text">Analisis BPM</span>
+      </div>
+      <button class="nav-toggle" onclick="toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">Inicio</a>
+        <a href="evaluacion.html" class="nav-link">Iniciar Evaluacion</a>
+        <a href="admin.html" class="nav-link active">Panel Admin</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Loading State -->
+  <div id="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p class="loading-text">Cargando datos de análisis...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="errorContainer" class="error-container hidden">
+    <div class="error-card">
+      <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <h3 class="error-title">Error al cargar los datos</h3>
+      <p id="errorMessage" class="error-message"></p>
+      <button onclick="location.reload()" class="error-button">Reintentar</button>
+    </div>
+  </div>
+
+  <!-- Main Dashboard -->
+  <main id="dashboard" class="dashboard hidden">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Análisis de Frecuencia Cardíaca</h1>
+        <p class="page-subtitle">Resumen estadístico de 30 pacientes monitoreados</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" onclick="window.print()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+            <rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          Imprimir
+        </button>
+        <button class="btn-primary" onclick="exportarDatos()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          Exportar
+        </button>
+      </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <p class="metric-label">Total Pacientes</p>
+          <h2 id="totalPacientes" class="metric-value">--</h2>
+          <p class="metric-trend trend-neutral">
+            <span>Monitoreados activamente</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <p class="metric-label">Lecturas Totales</p>
+          <h2 id="totalMuestras" class="metric-value">--</h2>
+          <p class="metric-trend trend-positive">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+            </svg>
+            <span id="lecturasPorPaciente">24 por paciente</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <p class="metric-label">BPM Promedio</p>
+          <h2 id="promedioGeneral" class="metric-value">--</h2>
+          <p class="metric-trend trend-neutral">
+            <span>Rango saludable</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon metric-icon-orange">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+          </svg>
+        </div>
+        <div class="metric-content">
+          <p class="metric-label">Rango BPM</p>
+          <h2 id="rangoBpm" class="metric-value">--</h2>
+          <p class="metric-trend trend-neutral">
+            <span>Min - Max</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      <!-- Left Column: Executive Summary -->
+      <div class="content-left">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Resumen Ejecutivo</h3>
+            <span class="card-badge">Análisis Completo</span>
+          </div>
+          <div class="card-body">
+            <div id="resumenEjecutivo" class="executive-summary">
+              <!-- Dynamic content -->
+            </div>
+
+            <div class="summary-section">
+              <h4 class="summary-title">Clasificación Clínica</h4>
+              <div class="classification-list">
+                <div class="classification-item classification-low">
+                  <div class="classification-header">
+                    <span class="classification-label">Bradicardia</span>
+                    <span id="bradicardia" class="classification-value">-- (--%)span>
+                  </div>
+                  <div class="classification-bar">
+                    <div id="barBradicardia" class="classification-fill" style="width: 0%"></div>
+                  </div>
+                  <p class="classification-desc">Frecuencia cardíaca < 60 BPM</p>
+                </div>
+
+                <div class="classification-item classification-normal">
+                  <div class="classification-header">
+                    <span class="classification-label">Normal</span>
+                    <span id="normal" class="classification-value">-- (--%)span>
+                  </div>
+                  <div class="classification-bar">
+                    <div id="barNormal" class="classification-fill" style="width: 0%"></div>
+                  </div>
+                  <p class="classification-desc">Frecuencia cardíaca 60-100 BPM</p>
+                </div>
+
+                <div class="classification-item classification-high">
+                  <div class="classification-header">
+                    <span class="classification-label">Taquicardia</span>
+                    <span id="elevado" class="classification-value">-- (--%)span>
+                  </div>
+                  <div class="classification-bar">
+                    <div id="barElevado" class="classification-fill" style="width: 0%"></div>
+                  </div>
+                  <p class="classification-desc">Frecuencia cardíaca > 100 BPM</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="summary-section">
+              <h4 class="summary-title">Hallazgos Principales</h4>
+              <div id="hallazgos" class="findings-list">
+                <!-- Dynamic content -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Charts -->
+      <div class="content-right">
+        <!-- Distribution Chart -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Distribución de Clasificación</h3>
+            <select class="card-select" id="chartTypeSelect" onchange="cambiarTipoGrafica()">
+              <option value="doughnut">Gráfica de Dona</option>
+              <option value="pie">Gráfica Circular</option>
+              <option value="bar">Gráfica de Barras</option>
+            </select>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas id="chartClasificacion"></canvas>
+            </div>
+            <div id="chartLegend" class="chart-legend">
+              <!-- Dynamic legend -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparison Charts Grid -->
+        <div class="charts-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Por Grupo de Edad</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container-small">
+                <canvas id="chartEdad"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Por Sexo</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container-small">
+                <canvas id="chartSexo"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Por Rutina Física</h3>
+            </div>
+            <div class="card-body">
+              <div class="chart-container-small">
+                <canvas id="chartRutina"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Promedios Detallados por Grupo</h3>
+        <button class="btn-icon" onclick="toggleTable()">
+          <svg id="tableToggleIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+      </div>
+      <div id="dataTable" class="card-body">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Categoría</th>
+                <th>Grupo</th>
+                <th>BPM Promedio</th>
+                <th>Lecturas</th>
+                <th>Clasificación</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('navMenu');
+      menu.classList.toggle('active');
+    }
+  </script>
+  <script src="js/analisis-pro.js"></script>
+</body>
+</html>

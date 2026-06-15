@@ -1,0 +1,26 @@
+# Archivos de desarrollo
+*.bat
+INICIAR_SERVIDOR.bat
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (por si agregas build tools en el futuro)
+node_modules/
+dist/
+.cache/

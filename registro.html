@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Pacientes - CardioMonitor Pro</title>
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    .form-card {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .success-message {
+      background: #D1FAE5;
+      border: 1px solid #10B981;
+      color: #047857;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: none;
+    }
+    
+    .success-message.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .btn-reset {
+      background: #F3F4F6;
+      color: #6B7280;
+    }
+    
+    .btn-reset:hover {
+      background: #E5E7EB;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+        </svg>
+        <span class="brand-text">CardioMonitor Pro</span>
+      </a>
+      <button class="nav-toggle" onclick="toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">Inicio</a>
+        <a href="evaluacion.html" class="nav-link">Iniciar Evaluacion</a>
+        <a href="admin.html" class="nav-link active">Panel Admin</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">Registro de Pacientes</h1>
+      <p class="page-subtitle">
+        Capture la información básica del participante para su posterior medición 
+        y análisis de frecuencia cardíaca
+      </p>
+    </div>
+
+    <div class="form-card">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Nuevo Paciente</h2>
+        </div>
+        <div class="card-body">
+          <form id="formPaciente">
+            <!-- Personal Information -->
+            <div style="margin-bottom: 2rem;">
+              <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary);">
+                Información Personal
+              </h3>
+              
+              <div class="form-group">
+                <label class="form-label">Nombre Completo *</label>
+                <input type="text" id="nombre" class="form-input" placeholder="Ej: Juan Pérez García" required>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Edad *</label>
+                  <input type="number" id="edad" class="form-input" min="1" max="120" placeholder="Años" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Sexo *</label>
+                  <select id="sexo" class="form-select" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Anthropometric Data -->
+            <div style="margin-bottom: 2rem;">
+              <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary);">
+                Datos Antropométricos
+              </h3>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Peso (kg) *</label>
+                  <input type="number" id="peso" class="form-input" step="0.1" min="1" placeholder="Ej: 70.5" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Altura (cm) *</label>
+                  <input type="number" id="altura" class="form-input" min="1" placeholder="Ej: 175" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Information -->
+            <div style="margin-bottom: 2rem;">
+              <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary);">
+                Actividad Física
+              </h3>
+              
+              <div class="form-group">
+                <label class="form-label">Rutina Física *</label>
+                <select id="rutina" class="form-select" required>
+                  <option value="">Seleccione...</option>
+                  <option value="Sedentario">Sedentario - Poca o ninguna actividad física</option>
+                  <option value="Activo">Activo - Ejercicio regular 3+ días por semana</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Registrar Paciente
+              </button>
+              <button type="reset" class="btn btn-reset">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <polyline points="1 4 1 10 7 10"/>
+                  <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+                </svg>
+                Limpiar Formulario
+              </button>
+            </div>
+          </form>
+
+          <!-- Success Message -->
+          <div id="resultado" class="success-message"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/registro.js"></script>
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('navMenu');
+      menu.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>
